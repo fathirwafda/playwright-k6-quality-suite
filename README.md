@@ -121,8 +121,8 @@ Current size: 17 API tests, 23 UI tests (plus 2 opt-in visual tests and 1 login 
 ```text
 .
 ├── .github/workflows/
-│   ├── playwright.yml        # lint, typecheck, api + ui-chromium; push/PR/nightly/manual
-│   └── k6.yml                # k6 smoke/load; weekly/manual
+│   ├── playwright.yml        # lint, typecheck, api + ui-chromium; push/PR/manual
+│   └── k6.yml                # k6 smoke/load; perf changes/manual
 ├── perf/
 │   ├── lib/
 │   │   ├── config.js         # base URLs, shared thresholds
@@ -266,14 +266,14 @@ real capacity.
 
 ```mermaid
 flowchart LR
-    Trigger{{"push to main / PR<br/>nightly 03:00 UTC<br/>manual (optional --grep)"}}
+    Trigger{{"push to main / PR<br/>manual (optional --grep)"}}
     Trigger --> Static["static-checks<br/>npm ci, lint,<br/>typecheck, prettier"]
     Static --> API["api project"]
     Static --> UI["ui-chromium project<br/>(+ setup: storageState)"]
     API --> RepA[/"playwright-report-api"/]
     UI --> RepU[/"playwright-report-ui-chromium"/]
 
-    K6Trigger{{"weekly Mon 04:00 UTC<br/>manual (choose script)"}}
+    K6Trigger{{"push changing perf/**<br/>manual (choose script)"}}
     K6Trigger --> K6["setup-k6-action<br/>k6 run perf/&lt;script&gt;.js"]
     K6 --> K6Art[/"k6-summary-&lt;script&gt;"/]
 ```
@@ -281,8 +281,8 @@ flowchart LR
 - `playwright.yml`: the two test projects run as a matrix with `fail-fast: false`, so an API outage
   does not hide UI results. Reports upload even when tests fail. A newer push cancels an older run
   on the same branch.
-- `k6.yml`: runs the smoke script on pushes to `main` that change `perf/**` and on the weekly
-  schedule; a manual run can pick any of the three.
+- `k6.yml`: runs the smoke script on pushes to `main` that change `perf/**`; a manual run can
+  pick any of the three. There are no scheduled runs.
 - Action major versions are pinned (`actions/checkout@v4`, `actions/setup-node@v4`,
   `actions/upload-artifact@v4`, `grafana/setup-k6-action@v1`).
 
@@ -366,7 +366,7 @@ intentional (the sites exist for practice).
 ## Roadmap
 
 - Run the visual tests inside the Playwright Docker image in CI with committed Linux baselines.
-- Add Firefox and WebKit to the CI matrix on the nightly schedule only.
+- Add Firefox and WebKit to the CI matrix as a manual-only job.
 - Generate the API client types from an OpenAPI spec where a target publishes one.
 - Push k6 results to Grafana Cloud k6 or an InfluxDB/Grafana stack for trend dashboards.
 - Add a k6 browser test for the QuickPizza front end.
