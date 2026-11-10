@@ -1,0 +1,45 @@
+{
+  "name": "playwright-k6-quality-suite",
+  "version": "1.0.0",
+  "description": "Portfolio test automation suite: Playwright (UI + API, TypeScript) and k6 performance tests against public demo targets.",
+  "private": true,
+  "license": "MIT",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "playwright test",
+    "test:api": "playwright test --project=api",
+    "test:ui": "playwright test --project=ui-chromium",
+    "test:ui:all": "playwright test --project=ui-chromium --project=ui-firefox --project=ui-webkit",
+    "test:smoke": "playwright test --grep @smoke --project=api --project=ui-chromium",
+    "test:a11y": "playwright test --grep @a11y --project=ui-chromium",
+    "report": "playwright show-report",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "perf:smoke": "k6 run perf/quickpizza-smoke.js",
+    "perf:load": "k6 run perf/quickpizza-load.js",
+    "perf:load:short": "k6 run -e PEAK_VUS=5 -e STAGE_SCALE=0.4 perf/quickpizza-load.js",
+    "perf:booking": "k6 run perf/booking-api-smoke.js"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@eslint/js": "^10.0.1",
+    "@faker-js/faker": "^10.6.0",
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^20.19.43",
+    "dotenv": "^18.0.10",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-playwright": "^2.12.2",
+    "globals": "^17.14.0",
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.2",
+    "zod": "^4.6.7"
+  }
+}

@@ -1,0 +1,41 @@
+name: k6
+
+on:
+  schedule:
+    - cron: '0 4 * * 1' # weekly, Monday 04:00 UTC
+  workflow_dispatch:
+    inputs:
+      script:
+        description: 'Which k6 script to run'
+        type: choice
+        options:
+          - quickpizza-smoke
+          - quickpizza-load
+          - booking-api-smoke
+        default: quickpizza-smoke
+
+jobs:
+  k6:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Scheduled runs use the smoke test; manual runs use the chosen script.
+      SCRIPT: ${{ inputs.script || 'quickpizza-smoke' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: grafana/setup-k6-action@v1
+        with:
+          k6-version: '2.3.0' # the version the scripts were verified with
+
+      - name: Run k6
+        run: k6 run "perf/${SCRIPT}.js"
+
+      - name: Upload summary
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-summary-${{ env.SCRIPT }}
+          path: perf/results/
+          if-no-files-found: warn
+          retention-days: 30
