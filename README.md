@@ -281,7 +281,8 @@ flowchart LR
 - `playwright.yml`: the two test projects run as a matrix with `fail-fast: false`, so an API outage
   does not hide UI results. Reports upload even when tests fail. A newer push cancels an older run
   on the same branch.
-- `k6.yml`: scheduled runs use the smoke script; a manual run can pick any of the three.
+- `k6.yml`: runs the smoke script on pushes to `main` that change `perf/**` and on the weekly
+  schedule; a manual run can pick any of the three.
 - Action major versions are pinned (`actions/checkout@v4`, `actions/setup-node@v4`,
   `actions/upload-artifact@v4`, `grafana/setup-k6-action@v1`).
 

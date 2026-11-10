@@ -1,6 +1,11 @@
 name: k6
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'perf/**'
+      - '.github/workflows/k6.yml'
   schedule:
     - cron: '0 4 * * 1' # weekly, Monday 04:00 UTC
   workflow_dispatch:
